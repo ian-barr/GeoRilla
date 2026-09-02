@@ -14,6 +14,7 @@ GSEM
 }
 \description{
 This function calculates Geometric SEM from a set of data
+\deqn{\textrm{GSEM}(x_i) = \exp{(sem_l)};~ sem_l = \frac{\sigma_l}{\sqrt{n}}}
 }
 \examples{
 GSEM((9:20)*10) ## Returns 1.077717

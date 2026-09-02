@@ -1,6 +1,7 @@
 #' GMEAN
 #'
 #' This function calculates Geometric Mean from a set of data
+#' \deqn{\textrm{GMEAN}(x_i) = \exp{(\mu_l)}; \mu_l = \frac{1}{n}\sum_i^n \ln(x_i)}
 #' @param x Data points, as a vector-like object
 #' @keywords GMEAN
 #' @return GMEAN
@@ -16,9 +17,48 @@ GMEAN <- function(x){
   }
 }
 
+#' GMEAN.MM
+#'
+#' This function calculates Geometric Mean using the Method of Moments, as well as
+#' the Geometric SD. The only inputs are the mean and variance of the data. The data is assumed to be log-normal.
+#' \deqn{\textrm{GMEAN}(m,V) = \exp{(\mu_l)}; ~\mu_l = 2 \ln(m) - \ln \left (\sqrt{V + m^2} \right )}
+#' \deqn{\textrm{GSD}(m,V) = \exp(\sigma_l); ~\sigma_l = \sqrt{\ln(1.0 + V/m^2)}}
+#' @param m The mean of the data, an estimator for \eqn{E[x]}.
+#' @param V The variance of the data, an estimator for \eqn{E[x^2] - E[x]^2}.
+#' @keywords GMEAN.MM
+#' @return GMEAN.MM
+#' @export
+#' @examples
+#' GMEAN.MM( mean( 9:20 * 10 ), var((9:20)*10 ) ) ## Returns $g.mean 140.715, $g.sd 1.277543
+GMEAN.MM <- function(m,V){
+  s2 <- log(1.0 + V/m^2)
+  mu <- 2.0*log(m) - log(sqrt(V + m^2))
+  return(list(g.mean = exp(mu), g.sd = exp(sqrt(s2))))
+}
+
+#' MOMENTS.MM
+#'
+#' This function calculates arithmetic Mean as well as the variance from the Geometric mean and sd using the Method of Moments. The only inputs are the geometric mean and variance of the data. The data is assumed to be log-normal.
+#' \deqn{\textrm{GMEAN}(m,V) = \exp{(\mu_l)}; ~\mu_l = 2 \ln(m) - \ln \left (\sqrt{V + m^2} \right )}
+#' \deqn{\textrm{GSD}(m,V) = \exp(\sigma_l); ~\sigma_l = \sqrt{\ln(1.0 + V/m^2)}}
+#' @param gmean The geometric mean of the data.
+#' @param gsd The geometric SD.
+#' @keywords MOMENTS.MM
+#' @return MOMENTS.MM
+#' @export
+#' @examples
+#' MOMENTS.MM( 140.0, 1.3 ) ## Returns $mean 144.9023, $var 1496.212
+MOMENTS.MM <- function(gmean,gsd){
+  sd <- log(gsd)
+  m <- gmean*exp(0.5*sd^2)
+  V <- m^2 * (exp(sd^2) - 1)
+  return(list(mean = m, var = V))
+}
+
 #' GSD
 #'
 #' This function calculates Geometric Standard Deviation from a set of data
+#' \deqn{$$GSD = \exp(\sigma_l); \sigma_l = \sqrt{\frac{\sum_i^n \left ( \ln(X_i) - \mu_l \right )^2}{n-1} }$$}
 #' @param x Data points, as a vector-like object
 #' @keywords GSD
 #' @return GSD
@@ -37,6 +77,7 @@ GSD <- function(x){
 #' GSEM
 #'
 #' This function calculates Geometric SEM from a set of data
+#' \deqn{\textrm{GSEM}(x_i) = \exp{(sem_l)};~ sem_l = \frac{\sigma_l}{\sqrt{n}}}
 #' @param x Data points, as a vector-like object
 #' @keywords GSEM
 #' @return GSEM
@@ -195,7 +236,7 @@ GCV2GCI <- function(GCV,n,gmn,alpha = 0.05,percent = FALSE){
   f <- ifelse(percent, 100.0, 1.0)
   GCV <- GCV/f
   lgsem <- sqrt( log1p(GCV^2)) / sqrt(n)
-  qs <- abs(qt(alpha/2. , df=(n-1),lower.tail = TRUE))
+  qs <- abs(qt(alpha/2.0, df=(n-1),lower.tail = TRUE))
   CI <- lgsem * c(-qs,qs)
   return(exp(log(gmn) + CI))
 }
@@ -204,23 +245,18 @@ GCV2GCI <- function(GCV,n,gmn,alpha = 0.05,percent = FALSE){
 #'
 #' This function converts Geometric Confidence Interval to Geometric Coefficient of Variation
 #' @param GCI Geometric Confidence interval, as `c(lower,upper)`
-#' @param alpha Type I error rate (0.05 for 95\% CI)
-#' @param gm geometric mean of the samples
+#' @param alpha Type I error rate (0.05 for 95\% GCI)
 #' @param n degrees of freedom (or number of data points)
 #' @param percent Is the GCV to be expressed as a percent? Defaults to FALSE.
 #' @keywords GCI, GCV
 #' @return GCV (based on mean of lower, upper log SDs)
 #' @export
 #' @examples
-#' GCI2GCV(GCI=c(45.6,66.4), n=15, gmn = 55.0) ## returns $using.lower 0.3483738, upper 0.3502207 
-GCI2GCV <- function(GCI,n,gmn,alpha=0.05, percent = FALSE){
+#' GCI2GCV(GCI=c(45.6,66.4), n=15) ## returns 0.349297 
+GCI2GCV <- function(GCI,n,alpha=0.05, percent = FALSE){
   f <- ifelse(percent, 100.0, 1.0)
-  CIp <- max(GCI)/gmn
-  CIn <- gmn / min(GCI)
-  qp <- qt(1.0 - alpha/2. , df=(n-1),lower.tail = TRUE)
-  qn <- qt(alpha/2. , df=(n-1),lower.tail = TRUE)
-  sdp <- sqrt(n)*log(CIp) / qp
-  sdn <- sqrt(n)*log(CIn) / qn
-  sd <- mean(abs(c(sdp,sdn)))
-  return(list( "using.sd.mean"=f*sqrt(expm1(sd^2))))
+  fac <- sqrt(max(GCI)/min(GCI))
+  q <- qt(1.0 - alpha/2. , df=(n-1),lower.tail = TRUE)
+  sd <- sqrt(n)*log(fac) / q
+  return(f*sqrt(expm1(sd^2)))
 }

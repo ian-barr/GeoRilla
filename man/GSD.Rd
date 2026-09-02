@@ -14,6 +14,7 @@ GSD
 }
 \description{
 This function calculates Geometric Standard Deviation from a set of data
+\deqn{$$GSD = \exp(\sigma_l); \sigma_l = \sqrt{\frac{\sum_i^n \left ( \ln(X_i) - \mu_l \right )^2}{n-1} }$$}
 }
 \examples{
 GSD((9:20)*10) ## Returns 1.295986

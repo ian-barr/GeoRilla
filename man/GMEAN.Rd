@@ -14,6 +14,7 @@ GMEAN
 }
 \description{
 This function calculates Geometric Mean from a set of data
+\deqn{\textrm{GMEAN}(x_i) = \exp{(\mu_l)}; \mu_l = \frac{1}{n}\sum_i^n \ln(x_i)}
 }
 \examples{
 GMEAN((9:20)*10) ## Returns 140.729

@@ -4,18 +4,16 @@
 \alias{GCI2GCV}
 \title{GCI2GCV}
 \usage{
-GCI2GCV(GCI, n, gmn, alpha = 0.05, percent = FALSE)
+GCI2GCV(GCI, n, alpha = 0.05, percent = FALSE)
 }
 \arguments{
 \item{GCI}{Geometric Confidence interval, as `c(lower,upper)`}
 
 \item{n}{degrees of freedom (or number of data points)}
 
-\item{alpha}{Type I error rate (0.05 for 95\% CI)}
+\item{alpha}{Type I error rate (0.05 for 95\% GCI)}
 
 \item{percent}{Is the GCV to be expressed as a percent? Defaults to FALSE.}
-
-\item{gm}{geometric mean of the samples}
 }
 \value{
 GCV (based on mean of lower, upper log SDs)
@@ -24,7 +22,7 @@ GCV (based on mean of lower, upper log SDs)
 This function converts Geometric Confidence Interval to Geometric Coefficient of Variation
 }
 \examples{
-GCI2GCV(GCI=c(45.6,66.4), n=15, gmn = 55.0) ## returns $using.lower 0.3483738, upper 0.3502207 
+GCI2GCV(GCI=c(45.6,66.4), n=15) ## returns 0.349297 
 }
 \keyword{GCI,}
 \keyword{GCV}
