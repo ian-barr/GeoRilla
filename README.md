@@ -1,3 +1,10 @@
+### Installation
+
+This method depends on the `remotes` library:
+
+`> remotes::install_github("ian-barr/geoDude", build_manuals=TRUE,INSTALL_opts = c("--html"))`
+
+
 ### Working with Geometric Statistics
 
 Geometric means, Standard deviations, 95% Confidence intervals, and SEMs are defined based on the log-transformed data.
