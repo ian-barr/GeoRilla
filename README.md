@@ -4,7 +4,7 @@ This method depends on the `remotes` library:
 
 `> remotes::install_github("ian-barr/geoDude", build_manuals=TRUE,INSTALL_opts = c("--html"))`
 
-Additionally, you can use `pad`:
+Additionally, you can use `pak`:
 
 `> pak::pkg_install("ian-barr/geoDude")`
 
