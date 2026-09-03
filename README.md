@@ -4,6 +4,10 @@ This method depends on the `remotes` library:
 
 `> remotes::install_github("ian-barr/geoDude", build_manuals=TRUE,INSTALL_opts = c("--html"))`
 
+Additionally, you can use `pad`:
+
+`> pak::pkg_install("ian-barr/geoDude")`
+
 
 ### Working with Geometric Statistics
 
